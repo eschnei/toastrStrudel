@@ -98,11 +98,22 @@ export function Spectrum({
     if (!ctx) return
 
     const rect = canvas.getBoundingClientRect()
+    const dpr = window.devicePixelRatio || 1
+
+    // Ensure canvas is sized correctly
+    if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+      canvas.width = rect.width * dpr
+      canvas.height = rect.height * dpr
+    }
+
     const width = rect.width
     const height = rect.height
 
+    // Reset transform and apply DPI scale
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
     // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, width, height)
 
     // Get frequency data from analyser
     if (analyserNode && dataArrayRef.current && isActive) {
@@ -281,36 +292,13 @@ export function Spectrum({
   }, [analyserNode, isActive, mode, barCount, barGap, smoothing, showRegions, regionColors, glowIntensity])
 
   /**
-   * Initialize canvas and analyser data array
+   * Initialize analyser data array when analyserNode changes
    */
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    // Set up high-DPI canvas
-    const resizeCanvas = () => {
-      const rect = canvas.getBoundingClientRect()
-      const dpr = window.devicePixelRatio || 1
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        ctx.scale(dpr, dpr)
-      }
-    }
-
-    resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
-
-    // Set up analyser data array
     if (analyserNode) {
       dataArrayRef.current = new Uint8Array(analyserNode.frequencyBinCount)
       // Configure analyser for spectrum
       analyserNode.smoothingTimeConstant = smoothing
-    }
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas)
     }
   }, [analyserNode, smoothing])
 
