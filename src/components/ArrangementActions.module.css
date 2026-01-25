@@ -1,0 +1,208 @@
+/**
+ * ArrangementActions Styles
+ */
+
+.container {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.horizontal {
+  flex-direction: row;
+  justify-content: center;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+}
+
+/* Action Button */
+.actionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  background: var(--color-surface);
+  border: 2px solid var(--action-color);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Size variants */
+.medium {
+  min-width: 70px;
+  min-height: 60px;
+  padding: var(--spacing-sm);
+}
+
+.large {
+  min-width: 100px;
+  min-height: 80px;
+  padding: var(--spacing-md);
+}
+
+/* Hover state */
+.actionButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Pressing state */
+.actionButton.pressing:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Active state */
+.actionButton.active:not(:disabled) {
+  background: var(--action-color);
+  color: white;
+}
+
+.actionButton.active .icon {
+  stroke: white;
+}
+
+/* Disabled state */
+.actionButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--color-border);
+}
+
+/* Icon */
+.icon {
+  fill: none;
+  stroke: var(--action-color);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--transition-fast);
+}
+
+.medium .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.large .icon {
+  width: 28px;
+  height: 28px;
+}
+
+/* Label */
+.label {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--action-color);
+  transition: color var(--transition-fast);
+}
+
+.medium .label {
+  font-size: 10px;
+}
+
+.large .label {
+  font-size: 12px;
+}
+
+/* Action-specific colors */
+.drop {
+  --action-color: #ef4444;
+}
+
+.drop:hover:not(:disabled) {
+  box-shadow:
+    0 0 30px rgba(239, 68, 68, 0.4),
+    inset 0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+.breakdown {
+  --action-color: #22c55e;
+}
+
+.breakdown:hover:not(:disabled) {
+  box-shadow:
+    0 0 30px rgba(34, 197, 94, 0.4),
+    inset 0 0 20px rgba(34, 197, 94, 0.1);
+}
+
+.build {
+  --action-color: #f59e0b;
+}
+
+.build:hover:not(:disabled) {
+  box-shadow:
+    0 0 30px rgba(245, 158, 11, 0.4),
+    inset 0 0 20px rgba(245, 158, 11, 0.1);
+}
+
+.intro {
+  --action-color: #6366f1;
+}
+
+.intro:hover:not(:disabled) {
+  box-shadow:
+    0 0 30px rgba(99, 102, 241, 0.4),
+    inset 0 0 20px rgba(99, 102, 241, 0.1);
+}
+
+.outro {
+  --action-color: #64748b;
+}
+
+.outro:hover:not(:disabled) {
+  box-shadow:
+    0 0 30px rgba(100, 116, 139, 0.4),
+    inset 0 0 20px rgba(100, 116, 139, 0.1);
+}
+
+/* Touch-friendly sizing */
+@media (pointer: coarse) {
+  .medium {
+    min-width: 80px;
+    min-height: 70px;
+  }
+
+  .large {
+    min-width: 110px;
+    min-height: 90px;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .container.horizontal {
+    gap: var(--spacing-sm);
+  }
+
+  .large {
+    min-width: 80px;
+    min-height: 70px;
+    padding: var(--spacing-sm);
+  }
+
+  .large .icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .large .label {
+    font-size: 10px;
+  }
+}

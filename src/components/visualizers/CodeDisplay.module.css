@@ -1,0 +1,162 @@
+/**
+ * CodeDisplay Visualizer Styles
+ *
+ * Terminal-style code display with audio-reactive glow effects.
+ */
+
+.container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(10, 10, 20, 0.95) 100%
+  );
+}
+
+.codeWrapper {
+  width: 90%;
+  max-width: 800px;
+  max-height: 85%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 calc(20px * var(--glow-intensity, 0.3)) rgba(var(--color-accent-rgb, 138, 43, 226), calc(0.3 * var(--glow-intensity, 0.3))),
+    0 0 calc(40px * var(--glow-intensity, 0.3)) rgba(var(--color-accent-rgb, 138, 43, 226), calc(0.2 * var(--glow-intensity, 0.3))),
+    inset 0 0 60px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.1s ease-out;
+}
+
+.codeWrapper.active {
+  border-color: rgba(var(--color-accent-rgb, 138, 43, 226), 0.3);
+}
+
+.code {
+  margin: 0;
+  padding: 0;
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Menlo', monospace;
+  font-size: var(--font-size, 14px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  tab-size: 2;
+}
+
+.line {
+  display: flex;
+  align-items: flex-start;
+}
+
+.lineNumber {
+  flex-shrink: 0;
+  width: 2.5em;
+  padding-right: 1em;
+  text-align: right;
+  color: rgba(255, 255, 255, 0.25);
+  user-select: none;
+  font-size: 0.85em;
+}
+
+.lineContent {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Syntax highlighting */
+.function {
+  color: var(--color-accent, #8a2be2);
+  font-weight: 500;
+}
+
+.string {
+  color: #7ec699;
+}
+
+.number {
+  color: #f08d49;
+}
+
+.operator {
+  color: #67cdcc;
+}
+
+.comment {
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+/* Scan line effect - subtle retro terminal feel */
+.scanLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(var(--color-accent-rgb, 138, 43, 226), 0.15) 50%,
+    transparent 100%
+  );
+  animation: scan 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% {
+    top: 0%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+/* Scrollbar styling */
+.codeWrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.codeWrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.codeWrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.codeWrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .codeWrapper {
+    padding: 1rem 1.25rem;
+    width: 95%;
+  }
+
+  .code {
+    font-size: 12px;
+  }
+
+  .lineNumber {
+    width: 2em;
+    padding-right: 0.75em;
+  }
+}

@@ -1,0 +1,201 @@
+/**
+ * BeatIndicator Styles
+ */
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Size variants */
+.small {
+  gap: 3px;
+}
+
+.medium {
+  gap: 4px;
+}
+
+.large {
+  gap: 6px;
+}
+
+/* Dot style */
+.dot {
+  position: relative;
+  border-radius: 50%;
+  background: var(--color-surface-active);
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.small .dot {
+  width: 6px;
+  height: 6px;
+}
+
+.medium .dot {
+  width: 8px;
+  height: 8px;
+}
+
+.large .dot {
+  width: 12px;
+  height: 12px;
+}
+
+.dot.active {
+  background: var(--accent-color, var(--color-accent));
+  box-shadow: 0 0 calc(8px * var(--pulse-intensity, 1)) var(--accent-color, var(--color-accent));
+}
+
+.dot.downbeat {
+  transform: scale(1.2);
+}
+
+.dot.pulse {
+  animation: dotPulse 150ms ease-out;
+}
+
+@keyframes dotPulse {
+  0% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dot.downbeat.pulse {
+  animation: downbeatPulse 150ms ease-out;
+}
+
+@keyframes downbeatPulse {
+  0% {
+    transform: scale(1.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.beatNumber {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 2px;
+  font-size: 8px;
+  color: var(--color-text-muted);
+}
+
+/* Segment style */
+.segment {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-surface-active);
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.small .segment {
+  width: 12px;
+  height: 3px;
+}
+
+.medium .segment {
+  width: 16px;
+  height: 4px;
+}
+
+.large .segment {
+  width: 24px;
+  height: 6px;
+}
+
+.segment.active {
+  background: var(--accent-color, var(--color-accent));
+  box-shadow: 0 0 calc(6px * var(--pulse-intensity, 1)) var(--accent-color, var(--color-accent));
+}
+
+.segment.downbeat {
+  transform: scaleX(1.1);
+}
+
+.segment.pulse {
+  animation: segmentPulse 150ms ease-out;
+}
+
+@keyframes segmentPulse {
+  0% {
+    transform: scaleY(2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* Bar style */
+.bars {
+  align-items: flex-end;
+}
+
+.bar {
+  border-radius: 2px 2px 0 0;
+  background: var(--color-surface-active);
+  transition:
+    background var(--transition-fast),
+    height var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.small .bar {
+  width: 4px;
+  height: calc(16px * var(--bar-height, 0.5));
+}
+
+.medium .bar {
+  width: 6px;
+  height: calc(24px * var(--bar-height, 0.5));
+}
+
+.large .bar {
+  width: 8px;
+  height: calc(32px * var(--bar-height, 0.5));
+}
+
+.bar.active {
+  background: var(--accent-color, var(--color-accent));
+  box-shadow: 0 0 calc(6px * var(--pulse-intensity, 1)) var(--accent-color, var(--color-accent));
+  height: calc(var(--bar-height, 0.5) * 100%);
+}
+
+.bar.downbeat {
+  background: var(--color-warning);
+}
+
+.bar.pulse {
+  animation: barPulse 150ms ease-out;
+}
+
+@keyframes barPulse {
+  0% {
+    transform: scaleY(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}

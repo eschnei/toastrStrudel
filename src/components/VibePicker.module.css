@@ -1,0 +1,224 @@
+/**
+ * VibePicker Styles
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* Current vibe button */
+.currentVibe {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.currentVibe:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+}
+
+.currentVibe.small {
+  padding: 4px 8px;
+}
+
+.currentVibe.large {
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* Color preview circle */
+.colorPreview {
+  position: relative;
+  border-radius: 50%;
+  background: var(--preview-bg);
+  border: 2px solid var(--color-border);
+  overflow: hidden;
+}
+
+.small .colorPreview {
+  width: 16px;
+  height: 16px;
+}
+
+.medium .colorPreview {
+  width: 20px;
+  height: 20px;
+}
+
+.large .colorPreview {
+  width: 24px;
+  height: 24px;
+}
+
+.accentDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--preview-accent);
+}
+
+.small .accentDot {
+  width: 8px;
+  height: 8px;
+}
+
+.medium .accentDot {
+  width: 10px;
+  height: 10px;
+}
+
+.large .accentDot {
+  width: 12px;
+  height: 12px;
+}
+
+/* Label */
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.03em;
+}
+
+.small .label {
+  font-size: 10px;
+}
+
+.large .label {
+  font-size: 12px;
+}
+
+/* Expand icon */
+.expandIcon {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Options container */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.closeButton {
+  align-self: flex-end;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.closeButton:hover {
+  background: var(--color-surface);
+}
+
+/* Options list */
+.optionsList {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.optionsList.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.optionsList.vertical {
+  flex-direction: column;
+}
+
+.optionsList.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Vibe option button */
+.vibeOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-xs);
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.vibeOption:hover {
+  background: var(--color-surface);
+  transform: scale(1.05);
+}
+
+.vibeOption.active {
+  border-color: var(--preview-accent);
+  background: var(--color-surface);
+}
+
+.vibeOption.small {
+  padding: 4px;
+}
+
+.vibeOption.large {
+  padding: var(--spacing-sm);
+}
+
+/* Indicator (minimal display) */
+.indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.indicator .colorPreview {
+  width: 16px;
+  height: 16px;
+}
+
+.indicator .accentDot {
+  width: 8px;
+  height: 8px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .optionsList.grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .vibeOption .label {
+    font-size: 9px;
+  }
+}
