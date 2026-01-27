@@ -1,0 +1,443 @@
+/**
+ * VoiceRecorder Styles
+ */
+
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.container.compact {
+  padding: 12px;
+  gap: 8px;
+}
+
+.container.recording {
+  border-color: var(--color-error);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.container.preview {
+  border-color: var(--color-accent);
+}
+
+.container.unsupported {
+  opacity: 0.6;
+}
+
+/* Record Button */
+.recordButtonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.recordButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--color-surface);
+  border: 3px solid var(--color-error);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recordButton:hover:not(.disabled):not(.recording) {
+  background: var(--color-error);
+  transform: scale(1.05);
+}
+
+.recordButton:hover:not(.disabled):not(.recording) .micIcon {
+  stroke: white;
+}
+
+.recordButton.recording {
+  background: var(--color-error);
+  border-color: var(--color-error);
+  animation: pulse-glow 1s ease-in-out infinite;
+}
+
+.recordButton.recording .micIcon {
+  stroke: white;
+}
+
+.recordButton.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--color-border);
+}
+
+.recordButton.unsupported {
+  border-color: var(--color-text-muted);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+  }
+}
+
+/* Mic icon */
+.micIcon {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: var(--color-error);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--transition-fast);
+}
+
+/* Pulse rings */
+.pulseRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--color-error);
+  animation: pulse-expand 1.5s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Audio level indicator */
+.levelIndicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+  transition: transform 0.05s ease-out;
+}
+
+/* Record label */
+.recordLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color var(--transition-fast);
+}
+
+.recordLabel.active {
+  color: var(--color-error);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Waveform container */
+.waveformContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 12px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.waveformCanvas {
+  flex: 1;
+  height: 100%;
+}
+
+.playButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-accent);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.playButton:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.1);
+}
+
+.playButton.playing {
+  background: var(--color-warning);
+}
+
+.playButton .icon {
+  width: 14px;
+  height: 14px;
+  color: white;
+}
+
+.durationLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* Effect selector */
+.effectSelector {
+  display: flex;
+  gap: 8px;
+  position: relative;
+}
+
+.effectButton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: var(--color-bg-secondary);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.effectButton:hover:not(.disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border);
+}
+
+.effectButton.selected {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.effectButton.selected .effectIcon,
+.effectButton.selected .effectLabel {
+  color: white;
+}
+
+.effectButton.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.effectIcon {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.effectLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: color var(--transition-fast);
+}
+
+.processingIndicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-md);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Compact effect selector */
+.compactEffectSelector {
+  display: flex;
+  gap: 4px;
+}
+
+.compactEffectButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--color-bg-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.compactEffectButton:hover:not(.disabled) {
+  background: var(--color-surface-hover);
+}
+
+.compactEffectButton.selected {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.compactEffectButton.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Instruction row */
+.instructionRow {
+  display: flex;
+  gap: 8px;
+}
+
+.instructionInput {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+}
+
+.instructionInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.instructionInput:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-glow);
+}
+
+.instructionInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.addButton {
+  padding: 10px 20px;
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.addButton:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.addButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Cancel button */
+.cancelButton {
+  padding: 8px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.cancelButton:hover:not(:disabled) {
+  color: var(--color-text-secondary);
+}
+
+.cancelButton:disabled {
+  cursor: not-allowed;
+}
+
+/* Unsupported message */
+.unsupportedMessage {
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* Icon base */
+.icon {
+  display: block;
+}
+
+/* Touch-friendly sizing */
+@media (pointer: coarse) {
+  .recordButton {
+    width: 72px;
+    height: 72px;
+  }
+
+  .effectButton {
+    padding: 12px 8px;
+  }
+
+  .compactEffectButton {
+    width: 36px;
+    height: 36px;
+  }
+}

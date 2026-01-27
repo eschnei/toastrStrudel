@@ -493,7 +493,18 @@ stack(
   note("<c1 ~ f1 ~> <eb1 ~ ab1 ~>").s("sawtooth").lpf(250).gain(0.7).distort(0.2)
 ).sometimes(rev)
 
-Remember: Output ONLY the code. No explanations. Create MUSICAL patterns that have groove, dynamics, and emotional arc.`
+Remember: Output ONLY the code. No explanations. Create MUSICAL patterns that have groove, dynamics, and emotional arc.
+
+## VOICE SAMPLES
+When voice samples are available, you can incorporate them into patterns:
+- s("voice:0") - play voice sample 0
+- s("voice:0").chop(8) - slice voice sample into 8 parts
+- s("~ voice:0 ~ voice:0") - offbeat placement
+- s("voice:0").speed(2) - double speed (higher pitch)
+- s("voice:0").speed(0.5) - half speed (lower pitch)
+- s("voice:0").lpf(2000).room(0.5) - apply effects
+
+Follow user instructions for how to use voice samples (e.g., "sprinkle on offbeats", "chop it up").`
 
 /**
  * Creates a prompt for EVOLVING an existing pattern (the default mode after first generation)
@@ -689,4 +700,48 @@ export function createConversationContextPrompt(contextString: string): string {
 ${contextString}
 
 Consider the above context when generating the new pattern. Maintain continuity with previous requests unless explicitly asked to start fresh.`
+}
+
+/**
+ * Voice sample info for AI context
+ */
+export interface VoiceSampleInfo {
+  name: string
+  duration: number
+  effect: string
+  instruction: string
+}
+
+/**
+ * Creates voice sample context for AI prompts
+ */
+export function createVoiceSampleContextPrompt(samples: VoiceSampleInfo[]): string {
+  if (!samples || samples.length === 0) {
+    return ''
+  }
+
+  const lines = [
+    '## VOICE SAMPLES AVAILABLE',
+    'The user has recorded voice samples you can use in patterns:',
+    '',
+  ]
+
+  for (const sample of samples) {
+    const sampleRef = `s("${sample.name}")`
+    lines.push(`- ${sampleRef} (${sample.duration.toFixed(1)}s, ${sample.effect} effect)`)
+    if (sample.instruction) {
+      lines.push(`  User instruction: "${sample.instruction}"`)
+    }
+  }
+
+  lines.push('')
+  lines.push('### Voice sample usage examples:')
+  lines.push('- s("voice:0") - play the voice sample')
+  lines.push('- s("voice:0").chop(8) - slice into 8 parts, access with voice:0 through voice:7')
+  lines.push('- s("~ voice:0 ~ voice:0") - offbeat placement')
+  lines.push('- s("voice:0").speed(1.5).lpf(3000) - faster with filter')
+  lines.push('')
+  lines.push('Follow user instructions for how to incorporate each sample.')
+
+  return lines.join('\n')
 }

@@ -40,6 +40,7 @@ export function usePatternAgent(): UsePatternAgentReturn {
   const setStoreApiAvailable = useStore(state => state.setApiAvailable)
   const storeBPM = useStore(state => state.bpm)
   const storeCurrentPattern = useStore(state => state.currentPattern)
+  const voiceSnippets = useStore(state => state.voiceSnippets)
 
   // Check availability on mount
   useEffect(() => {
@@ -64,9 +65,18 @@ export function usePatternAgent(): UsePatternAgentReturn {
       setStoreStatus('generating')
 
       try {
+        // Convert voice snippets to sample info for AI context
+        const voiceSampleInfo = voiceSnippets.map(snippet => ({
+          name: `${snippet.sampleName}:${snippet.sampleIndex}`,
+          duration: snippet.duration,
+          effect: snippet.effect,
+          instruction: snippet.instruction,
+        }))
+
         const result = await agentRef.current.generatePattern(prompt, {
           bpm: storeBPM,
           currentPattern: storeCurrentPattern || undefined,
+          voiceSamples: voiceSampleInfo.length > 0 ? voiceSampleInfo : undefined,
         })
 
         setLastPattern(result.pattern)
@@ -84,7 +94,7 @@ export function usePatternAgent(): UsePatternAgentReturn {
         return null
       }
     },
-    [storeBPM, storeCurrentPattern, setStoreStatus, setStoreError]
+    [storeBPM, storeCurrentPattern, voiceSnippets, setStoreStatus, setStoreError]
   )
 
   // Clear conversation context

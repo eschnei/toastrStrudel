@@ -21,7 +21,7 @@ const EXAMPLE_PROMPTS = [
 export function EmptyState({ onExampleClick }: EmptyStateProps) {
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>VIBE CONDUCTOR</h1>
+      <h1 className={styles.title}>TOASTR STRUDEL</h1>
       <p className={styles.tagline}>describe music with words, no skills required</p>
 
       <div className={styles.examples}>

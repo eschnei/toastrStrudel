@@ -15,8 +15,10 @@ import {
   createModificationPrompt,
   createMusicalContext,
   createConversationContextPrompt,
+  createVoiceSampleContextPrompt,
   analyzeModificationIntent,
   type ModificationIntent,
+  type VoiceSampleInfo,
 } from './prompts/patternAgent'
 import { getConversationManager } from './ConversationManager'
 import { analyzePattern, generateStateSummary } from './MusicalStateAnalyzer'
@@ -197,6 +199,8 @@ export class PatternAgent {
       currentMood?: string
       /** Force fresh generation without conversation context */
       ignoreContext?: boolean
+      /** Voice samples available for use */
+      voiceSamples?: VoiceSampleInfo[]
     }
   ): Promise<GenerationResult> {
     if (!isAnthropicAvailable()) {
@@ -262,6 +266,14 @@ export class PatternAgent {
       )
       if (conversationContext) {
         userMessage = `${conversationContext}\n\n${userMessage}`
+      }
+    }
+
+    // Add voice sample context if voice samples are available
+    if (options?.voiceSamples && options.voiceSamples.length > 0) {
+      const voiceContext = createVoiceSampleContextPrompt(options.voiceSamples)
+      if (voiceContext) {
+        userMessage = `${voiceContext}\n\n${userMessage}`
       }
     }
 

@@ -13,3 +13,9 @@ export type { UseEnergyResult } from './useEnergy'
 
 export { useVibeTheme, detectVibe, getVibeDisplayInfo } from './useVibeTheme'
 export type { VibeType, VibeColors, UseVibeThemeResult } from './useVibeTheme'
+
+export { useVoiceRecorder } from './useVoiceRecorder'
+export type { UseVoiceRecorderReturn } from './useVoiceRecorder'
+
+export { useVoiceSnippets, createVoiceSampleContextString } from './useVoiceSnippets'
+export type { UseVoiceSnippetsReturn } from './useVoiceSnippets'

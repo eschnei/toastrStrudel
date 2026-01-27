@@ -1,4 +1,4 @@
-# Vibe Conductor
+# Toastr Strudel
 
 An AI-powered live music generation app that translates natural language prompts into playable electronic music using [Strudel](https://strudel.cc/).
 
@@ -22,8 +22,8 @@ An AI-powered live music generation app that translates natural language prompts
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/eschnei/vibeConductor.git
-   cd vibeConductor
+   git clone https://github.com/eschnei/toastrStrudel.git
+   cd toastrStrudel
    ```
 
 2. Install dependencies:

@@ -15,6 +15,7 @@ import { create } from 'zustand'
 import { subscribeWithSelector, persist } from 'zustand/middleware'
 import type { ConversationEntry } from '@/agents/ConversationManager'
 import type { Snapshot } from '@/utils/SnapshotManager'
+import type { VoiceSnippet } from '@/voice/types'
 
 // Playback status types
 export type PlaybackStatus = 'stopped' | 'playing' | 'generating'
@@ -54,6 +55,9 @@ export interface AppState {
   isSnapshotPanelOpen: boolean
   isHistoryVisible: boolean
 
+  // Voice Recording state
+  voiceSnippets: VoiceSnippet[]
+
   // Actions
   setPattern: (pattern: string | null) => void
   setPlaying: (playing: boolean) => void
@@ -90,6 +94,12 @@ export interface AppState {
   setActivePromptIndex: (index: number) => void
   setSnapshotPanelOpen: (open: boolean) => void
   setHistoryVisible: (visible: boolean) => void
+
+  // Voice Recording actions
+  addVoiceSnippet: (snippet: VoiceSnippet) => void
+  removeVoiceSnippet: (id: string) => void
+  updateVoiceSnippet: (id: string, updates: Partial<VoiceSnippet>) => void
+  clearVoiceSnippets: () => void
 }
 
 // Default BPM as per requirements
@@ -120,6 +130,9 @@ const initialState = {
   // UI Panel states
   isSnapshotPanelOpen: false,
   isHistoryVisible: true,
+
+  // Voice Recording state
+  voiceSnippets: [] as VoiceSnippet[],
 }
 
 /**
@@ -262,6 +275,27 @@ export const useStore = create<AppState>()(
 
         setHistoryVisible: (visible: boolean) =>
           set({ isHistoryVisible: visible }),
+
+        // Voice Recording actions
+        addVoiceSnippet: (snippet: VoiceSnippet) =>
+          set(state => ({
+            voiceSnippets: [...state.voiceSnippets, snippet],
+          })),
+
+        removeVoiceSnippet: (id: string) =>
+          set(state => ({
+            voiceSnippets: state.voiceSnippets.filter(s => s.id !== id),
+          })),
+
+        updateVoiceSnippet: (id: string, updates: Partial<VoiceSnippet>) =>
+          set(state => ({
+            voiceSnippets: state.voiceSnippets.map(s =>
+              s.id === id ? { ...s, ...updates } : s
+            ),
+          })),
+
+        clearVoiceSnippets: () =>
+          set({ voiceSnippets: [] }),
       }),
       {
         name: 'vibe-conductor-store',
@@ -295,6 +329,10 @@ export const useSavedSnapshots = () => useStore(state => state.savedSnapshots)
 export const useActivePromptIndex = () => useStore(state => state.activePromptIndex)
 export const useIsSnapshotPanelOpen = () => useStore(state => state.isSnapshotPanelOpen)
 export const useIsHistoryVisible = () => useStore(state => state.isHistoryVisible)
+
+// Voice Recording selectors
+export const useVoiceSnippets = () => useStore(state => state.voiceSnippets)
+export const useHasVoiceSnippets = () => useStore(state => state.voiceSnippets.length > 0)
 
 // Phase 2: Combined history state
 export const useHistoryState = () =>

@@ -35,5 +35,12 @@ export type { VibePickerProps } from './VibePicker'
 export { VoiceInput, VoiceButton, useVoiceInputSupport } from './VoiceInput'
 export type { VoiceInputProps } from './VoiceInput'
 
+// Voice Recording components
+export { VoiceRecorder, RecordButton, WaveformPreview, EffectSelector, CompactEffectSelector } from './VoiceRecorder'
+export type { VoiceRecorderProps, RecordButtonProps, WaveformPreviewProps, EffectSelectorProps } from './VoiceRecorder'
+
+export { SnippetLibrary, CompactSnippetList, SnippetCard } from './SnippetLibrary'
+export type { SnippetLibraryProps, SnippetCardProps } from './SnippetLibrary'
+
 // Re-export visualizers
 export * from './visualizers'
