@@ -17,6 +17,7 @@ export const PATTERN_AGENT_SYSTEM_PROMPT = `You are a music pattern generator th
 5. Every output must be immediately playable
 6. ALWAYS create MUSICAL patterns - not just valid syntax, but emotionally resonant music
 7. Double-check every method chain closes its parentheses: .release(2) NOT .release(2,
+8. NEVER call methods on string literals - strings have no .add(), .scale(), etc. WRONG: note("c3 e3".add(x)) RIGHT: note("c3 e3").add(x)
 
 ## OUTPUT FORMAT
 - Return ONLY the Strudel code
@@ -490,7 +491,7 @@ stack(
   s("bd(3,8) [~ bd](5,8,1)").gain(0.85).speed("<1 1.2 0.8 1.5>"),
   s("sd:4(5,8) cp(3,8,2)").gain(0.7).room(0.4).pan(rand),
   s("hh*12?").gain(rand.range(0.2,0.5)).lpf(sine.range(1000,4000).fast(3)).crush(10),
-  note("<c3 eb3 gb3 a3>".add(rand.range(-0.3,0.3))).s("square").lpf(sine.range(300,2000).fast(2)).gain(0.6),
+  note("<c3 eb3 gb3 a3>").add(rand.range(-0.3,0.3)).s("square").lpf(sine.range(300,2000).fast(2)).gain(0.6),
   note("<c1 ~ f1 ~> <eb1 ~ ab1 ~>").s("sawtooth").lpf(250).gain(0.7).distort(0.2)
 ).sometimes(rev)
 

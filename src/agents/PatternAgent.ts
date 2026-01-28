@@ -143,6 +143,14 @@ export function cleanPatternResponse(response: string): string {
     '.$1($2),\n$3$4('
   )
 
+  // Repair methods called on string literals inside note/n/s/sound/freq:
+  // e.g. note("c3 e3".add(x)) → note("c3 e3").add(x)
+  // The string has no .add/.scale/.sub etc — these must be called on the pattern object
+  cleaned = cleaned.replace(
+    /((?:note|n|s|sound|freq)\("[^"]*")\.(\w+)\(/g,
+    '$1).$2('
+  )
+
   // Balance unmatched parentheses
   let openCount = 0
   for (const ch of cleaned) {
@@ -150,9 +158,17 @@ export function cleanPatternResponse(response: string): string {
     else if (ch === ')') openCount--
   }
   if (openCount > 0) {
-    // Append missing closing parens before any trailing .method() chain
-    // e.g. stack(...\n).slow(1.5) — insert before the final )
+    // Append missing closing parens
     cleaned = cleaned + ')'.repeat(openCount)
+  } else if (openCount < 0) {
+    // Remove trailing excess closing parens (e.g. from string-method repair)
+    let excess = -openCount
+    for (let i = cleaned.length - 1; i >= 0 && excess > 0; i--) {
+      if (cleaned[i] === ')') {
+        cleaned = cleaned.slice(0, i) + cleaned.slice(i + 1)
+        excess--
+      }
+    }
   }
 
   return cleaned.trim()
