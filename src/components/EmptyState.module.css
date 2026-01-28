@@ -8,22 +8,22 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--spacing-2xl);
+  padding: var(--spacing-lg) var(--spacing-2xl);
   animation: fadeIn var(--transition-slow) ease;
 }
 
 .title {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--color-text-primary);
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
 .tagline {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
 }
 
 .examples {
