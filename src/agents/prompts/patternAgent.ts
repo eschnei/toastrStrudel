@@ -16,6 +16,7 @@ export const PATTERN_AGENT_SYSTEM_PROMPT = `You are a music pattern generator th
 4. Make creative choices confidently based on emotional/sensory cues
 5. Every output must be immediately playable
 6. ALWAYS create MUSICAL patterns - not just valid syntax, but emotionally resonant music
+7. Double-check every method chain closes its parentheses: .release(2) NOT .release(2,
 
 ## OUTPUT FORMAT
 - Return ONLY the Strudel code

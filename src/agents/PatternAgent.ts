@@ -136,6 +136,25 @@ export function cleanPatternResponse(response: string): string {
     }
   }
 
+  // Repair broken method calls: .method(value,\n  pattern( → .method(value),\n  pattern(
+  // The AI sometimes forgets to close a method call before the stack separator comma
+  cleaned = cleaned.replace(
+    /\.(\w+)\(([^()]*),\s*\n(\s*)(note|s|sound|n|freq|stack)\(/g,
+    '.$1($2),\n$3$4('
+  )
+
+  // Balance unmatched parentheses
+  let openCount = 0
+  for (const ch of cleaned) {
+    if (ch === '(') openCount++
+    else if (ch === ')') openCount--
+  }
+  if (openCount > 0) {
+    // Append missing closing parens before any trailing .method() chain
+    // e.g. stack(...\n).slow(1.5) — insert before the final )
+    cleaned = cleaned + ')'.repeat(openCount)
+  }
+
   return cleaned.trim()
 }
 
