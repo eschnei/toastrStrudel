@@ -18,6 +18,7 @@ export const PATTERN_AGENT_SYSTEM_PROMPT = `You are a music pattern generator th
 6. ALWAYS create MUSICAL patterns - not just valid syntax, but emotionally resonant music
 7. Double-check every method chain closes its parentheses: .release(2) NOT .release(2,
 8. NEVER call methods on string literals - strings have no .add(), .scale(), etc. WRONG: note("c3 e3".add(x)) RIGHT: note("c3 e3").add(x)
+9. .euclid(pulses, steps) arguments MUST be positive integers with pulses <= steps. GOOD: .euclid(3,8) BAD: .euclid(0,8) .euclid(3.5,8) .euclid(9,8)
 
 ## OUTPUT FORMAT
 - Return ONLY the Strudel code

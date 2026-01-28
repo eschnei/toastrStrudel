@@ -151,6 +151,20 @@ export function cleanPatternResponse(response: string): string {
     '$1).$2('
   )
 
+  // Fix invalid .euclid() arguments: both must be positive integers, pulses <= steps
+  cleaned = cleaned.replace(
+    /\.euclid\(\s*([^,)]+)\s*,\s*([^,)]+)\s*\)/g,
+    (_match, rawPulses, rawSteps) => {
+      let pulses = Math.round(Number(rawPulses))
+      let steps = Math.round(Number(rawSteps))
+      // Clamp to valid range
+      if (!Number.isFinite(pulses) || pulses < 1) pulses = 3
+      if (!Number.isFinite(steps) || steps < 1) steps = 8
+      if (pulses > steps) pulses = steps
+      return `.euclid(${pulses},${steps})`
+    }
+  )
+
   // Balance unmatched parentheses
   let openCount = 0
   for (const ch of cleaned) {
