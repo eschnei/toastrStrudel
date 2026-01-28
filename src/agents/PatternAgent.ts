@@ -259,6 +259,13 @@ export function cleanPatternResponse(response: string): string {
     }
   )
 
+  // Ensure mini-notation rests (~) have spaces around them inside strings
+  // AI writes "sd~" or "~hh" which Strudel treats as a single sample name
+  cleaned = cleaned.replace(
+    /("(?:[^"\\]|\\.)*")/g,
+    (_match, str) => str.replace(/([a-zA-Z0-9])~/g, '$1 ~').replace(/~([a-zA-Z0-9])/g, '~ $1')
+  )
+
   // Repair invalid/invented sample names inside s() and sound() calls
   cleaned = repairSampleNames(cleaned)
 
