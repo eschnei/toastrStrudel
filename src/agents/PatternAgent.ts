@@ -68,6 +68,89 @@ const DEFAULT_CONFIG: Required<PatternAgentConfig> = {
 }
 
 /**
+ * Map of commonly invented sample names → valid Dirt-Samples replacements.
+ * The AI often makes up descriptive names that don't exist in the library.
+ */
+const SAMPLE_FALLBACK_MAP: Record<string, string> = {
+  // Descriptive names → actual Dirt-Samples folders
+  riser: 'noise',
+  whoosh: 'wind',
+  impact: 'stomp',
+  sweep: 'noise',
+  fx: 'feelfx',
+  sfx: 'feelfx',
+  cymbal: 'cr',
+  crash: 'cr',
+  ride: 'cr',
+  shaker: 'perc',
+  tambourine: 'perc',
+  tamb: 'perc',
+  bongo: 'tabla',
+  conga: 'tabla',
+  tom: 'mt',
+  clap: 'cp',
+  kick: 'bd',
+  snare: 'sd',
+  hihat: 'hh',
+  openhat: 'oh',
+  closedhat: 'hh',
+  cowbell: 'cb',
+  rimshot: 'rim',
+  // Synth/melodic descriptions
+  synth: 'arpy',
+  lead: 'arpy',
+  keys: 'notes',
+  piano: 'notes',
+  strings: 'padlong',
+  bell: 'tink',
+  chime: 'tink',
+  // FX descriptions
+  laser: 'glitch',
+  zap: 'glitch',
+  scratch: 'glitch2',
+  static: 'noise2',
+  vinyl: 'noise',
+  drone: 'padlong',
+  texture: 'feel',
+  ambient: 'space',
+  atmos: 'space',
+  atmosphere: 'space',
+  // Vocal
+  vocal: 'v',
+  vox: 'v',
+  // Nature
+  bird: 'birds',
+  water: 'bubble',
+  rain: 'noise',
+  thunder: 'industrial',
+  // Bass
+  sub: 'bass',
+  subbass: 'bass',
+  // Kit references
+  '909': 'drumtraks',
+}
+
+/**
+ * Repair sample names inside s() and sound() calls.
+ * Replaces invented/invalid names with valid Dirt-Samples alternatives.
+ */
+function repairSampleNames(code: string): string {
+  return code.replace(
+    /\b(s|sound)\("([^"]*)"\)/g,
+    (_match, func, content) => {
+      const repaired = content.replace(
+        /\b([a-z][a-z0-9]*)\b/gi,
+        (token: string) => {
+          const lower = token.toLowerCase()
+          return SAMPLE_FALLBACK_MAP[lower] ?? token
+        }
+      )
+      return `${func}("${repaired}")`
+    }
+  )
+}
+
+/**
  * Clean and parse AI response to extract pure Strudel code
  */
 export function cleanPatternResponse(response: string): string {
@@ -175,6 +258,9 @@ export function cleanPatternResponse(response: string): string {
       return `.euclid(${pulses},${steps})`
     }
   )
+
+  // Repair invalid/invented sample names inside s() and sound() calls
+  cleaned = repairSampleNames(cleaned)
 
   // Balance unmatched parentheses
   let openCount = 0

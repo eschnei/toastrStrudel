@@ -280,10 +280,59 @@ rand    // Random values
 .lpf("<4000 2000 3000 1000>")
 \`\`\`
 
-### Sample Banks
-- Core Drums: "bd" (kick), "sd" (snare), "hh" (hihat), "cp" (clap)
-- Use variations: "bd:3", "sd:5", "hh:2"
-- Synths: "sine", "sawtooth", "triangle", "square" (always available)
+### Sample Banks (Dirt-Samples Library)
+Use variations with colon syntax: "bd:3", "sd:5", "hh:2", etc. Each bank has multiple variations (0-indexed).
+
+IMPORTANT: ONLY use sample names listed below. Do NOT invent names like "riser", "whoosh", "impact" — they don't exist and will cause errors.
+
+**Kicks:**
+- "bd" (standard kicks, many variations), "hardkick", "clubkick", "popkick", "reverbkick", "kicklinn"
+- "808bd" (808 kick), "bassdm" (bass drum)
+
+**Snares & Claps:**
+- "sd" (snare drum), "sn" (snare alt), "cp" (clap), "realclaps"
+- "808sd" (808 snare), "rim" (rimshot), "rs" (rimshot alt)
+
+**Hihats & Cymbals:**
+- "hh" (closed hihat), "hh27" (alt hihat), "oh" (open hihat)
+- "808hc" (808 closed hat), "808oh" (808 open hat), "808cy" (808 cymbal)
+- "cr" (crash), "linnhats"
+
+**Toms:**
+- "ht" (high tom), "mt" (mid tom), "lt" (low tom)
+- "808ht", "808mt", "808lt" (808 toms)
+
+**Percussion:**
+- "perc", "hand", "tabla", "tabla2", "tink", "tok", "click", "clak"
+- "stomp", "coins", "can", "bottle", "glasstap", "metal", "tamb"
+- "cb" (cowbell), "808mc" (808 maracas)
+
+**Bass:**
+- "bass", "bass0", "bass1", "bass2", "bass3", "jvbass", "moog", "juno"
+- "bassfoo", "hoover"
+
+**Synth/Melodic:**
+- "arpy" (arp plucks), "arp", "pluck", "stab"
+- "pad" (short pad), "padlong" (long pad)
+- "fm", "notes", "newnotes", "sitar"
+
+**FX & Atmosphere:**
+- "noise", "noise2", "glitch", "glitch2" (glitch/noise effects)
+- "wind" (wind textures), "fire", "space" (atmospheric)
+- "feel", "feelfx" (FX hits), "breath", "bubble"
+- "industrial" (industrial sounds), "future" (futuristic)
+
+**Vocal/Speech:**
+- "mouth", "speech", "speechless", "v", "diphone", "diphone2"
+- "alphabet", "numbers"
+
+**Full Kits (multi-sound banks):**
+- "drumtraks", "electro1", "gretsch", "dr55", "dr", "dr2"
+- "808" (full 808 kit), "casio"
+- "rave", "rave2", "techno", "house", "jungle"
+
+**Oscillator Synths (always available, use with note()):**
+- "sine", "sawtooth", "triangle", "square"
 
 ---
 
