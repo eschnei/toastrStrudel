@@ -30,6 +30,14 @@
   justify-content: center;
 }
 
+/* App name */
+.appName {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary);
+}
+
 /* Status indicator */
 .statusIndicator {
   display: flex;

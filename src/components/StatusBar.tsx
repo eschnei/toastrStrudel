@@ -119,6 +119,7 @@ function StatusBarBase() {
   return (
     <div className={styles.statusBar}>
       <div className={styles.left}>
+        <span className={styles.appName}>Toastr Strudel</span>
         <StatusIndicator playbackStatus={playbackStatus} isPlaying={isPlaying} />
 
         {/* Queued changes indicator */}
@@ -126,7 +127,7 @@ function StatusBarBase() {
       </div>
 
       <div className={styles.center}>
-        {/* Energy dots - Phase 3 implementation */}
+        {/* Energy dots */}
         <EnergyDots
           energyLevel={energyLevel}
           energyDots={energyDots}

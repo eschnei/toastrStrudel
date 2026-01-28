@@ -91,17 +91,18 @@ body {
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
   line-height: 1.5;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
   transition:
     background var(--vibe-transition),
     color var(--vibe-transition);
 }
 
 #root {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Typography */

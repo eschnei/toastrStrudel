@@ -14,7 +14,7 @@ import * as strudelWebaudio from '@strudel/webaudio'
 
 // Import from superdough for sample and synth registration
 // @ts-expect-error - superdough lacks TypeScript definitions
-import { registerSynthSounds, samples } from 'superdough'
+import { registerSynthSounds, samples, loadWorklets } from 'superdough'
 
 // Types
 export interface ValidationResult {
@@ -415,6 +415,13 @@ export class StrudelEngine {
           this.handlePatternError(error)
         },
       } as Parameters<typeof webaudioRepl>[0])
+
+      // Load AudioWorklet modules for synth effects
+      try {
+        await loadWorklets()
+      } catch (err) {
+        console.warn('[StrudelEngine] AudioWorklet loading failed (non-fatal):', err)
+      }
 
       // Set initial BPM (CPS = BPM / 60 / 4 for 4/4 time)
       this.setBPM(this.state.bpm)

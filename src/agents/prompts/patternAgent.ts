@@ -75,11 +75,11 @@ Melodies have shape. The shape conveys emotion.
 ### Scales for Different Moods
 **Use .scale() to constrain notes to a key:**
 
-- **Major (happy, bright)**: note("0 2 4 5 7 9 11".scale("C:major"))
-- **Minor (sad, dark)**: note("0 2 3 5 7 8 10".scale("A:minor"))
-- **Dorian (jazzy, soulful)**: note("0 2 3 5 7 9 10".scale("D:dorian"))
-- **Mixolydian (bluesy, rock)**: note("0 2 4 5 7 9 10".scale("G:mixolydian"))
-- **Phrygian (dark, spanish)**: note("0 1 3 5 7 8 10".scale("E:phrygian"))
+- **Major (happy, bright)**: n("0 2 4 5 7 9 11").scale("C:major")
+- **Minor (sad, dark)**: n("0 2 3 5 7 8 10").scale("A:minor")
+- **Dorian (jazzy, soulful)**: n("0 2 3 5 7 9 10").scale("D:dorian")
+- **Mixolydian (bluesy, rock)**: n("0 2 4 5 7 9 10").scale("G:mixolydian")
+- **Phrygian (dark, spanish)**: n("0 1 3 5 7 8 10").scale("E:phrygian")
 
 ---
 

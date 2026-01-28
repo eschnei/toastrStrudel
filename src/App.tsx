@@ -5,7 +5,7 @@
  * and an AI agent generates playable Strudel code for live electronic music.
  */
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import {
   StatusBar,
   Visualizer,
@@ -14,12 +14,9 @@ import {
   EmptyState,
   PlayButton,
   ErrorDisplay,
-  VoiceRecorder,
-  SnippetLibrary,
 } from '@/components'
-import { useStrudel, usePatternAgent, useVoiceSnippets } from '@/hooks'
+import { useStrudel, usePatternAgent } from '@/hooks'
 import { useStore } from '@/store'
-import type { VoiceSnippet, VoiceEffectType } from '@/voice/types'
 import styles from './App.module.css'
 
 function App() {
@@ -47,19 +44,6 @@ function App() {
   const setStatus = useStore(state => state.setStatus)
   const setApiAvailable = useStore(state => state.setApiAvailable)
   const clearStoreError = useStore(state => state.clearError)
-
-  // Voice snippet management
-  const {
-    snippets: voiceSnippets,
-    hasSnippets: hasVoiceSnippets,
-    addSnippet,
-    removeSnippet,
-    updateSnippetEffect,
-    clearAllSnippets,
-  } = useVoiceSnippets()
-
-  // UI state for voice panel
-  const [isVoicePanelExpanded, setIsVoicePanelExpanded] = useState(false)
 
   // Check API availability on mount
   useEffect(() => {
@@ -133,23 +117,6 @@ function App() {
   // Combined error message
   const errorMessage = storeError || agentError
 
-  // Handle snippet added
-  const handleSnippetAdd = useCallback(
-    (snippet: VoiceSnippet) => {
-      addSnippet(snippet)
-      setIsVoicePanelExpanded(true)
-    },
-    [addSnippet]
-  )
-
-  // Handle snippet effect change
-  const handleEffectChange = useCallback(
-    (snippetId: string, effect: VoiceEffectType) => {
-      updateSnippetEffect(snippetId, effect)
-    },
-    [updateSnippetEffect]
-  )
-
   return (
     <div className={styles.app}>
       {/* Status bar at top */}
@@ -174,41 +141,9 @@ function App() {
         </section>
       </main>
 
-      {/* Voice snippet panel */}
-      {hasVoiceSnippets && (
-        <aside className={`${styles.voicePanel} ${isVoicePanelExpanded ? styles.expanded : ''}`}>
-          <button
-            className={styles.voicePanelToggle}
-            onClick={() => setIsVoicePanelExpanded(!isVoicePanelExpanded)}
-          >
-            Voice Samples ({voiceSnippets.length})
-            <span className={styles.toggleIcon}>{isVoicePanelExpanded ? '▼' : '▲'}</span>
-          </button>
-          {isVoicePanelExpanded && (
-            <SnippetLibrary
-              snippets={voiceSnippets}
-              compact
-              showEmptyState={false}
-              onEffectChange={handleEffectChange}
-              onDeleteSnippet={removeSnippet}
-              onClearAll={clearAllSnippets}
-            />
-          )}
-        </aside>
-      )}
-
       {/* Bottom control bar */}
       <footer className={styles.footer}>
         <div className={styles.controls}>
-          {/* Voice recorder */}
-          <div className={styles.voiceSection}>
-            <VoiceRecorder
-              onSnippetAdd={handleSnippetAdd}
-              disabled={isGenerating}
-              compact
-            />
-          </div>
-
           <div className={styles.inputSection}>
             <PromptInput onSubmit={handlePromptSubmit} disabled={isGenerating} />
           </div>
