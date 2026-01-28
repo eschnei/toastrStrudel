@@ -8,7 +8,7 @@
  * @references Section 8.5 Multi-Agent Architecture, Phase 4 Tasks
  */
 
-import { getAnthropicClient, isAnthropicAvailable } from './anthropic'
+import { isAnthropicAvailable, createChatCompletion } from './anthropic'
 import { cleanPatternResponse } from './PatternAgent'
 import { analyzePattern, generateStateSummary } from './MusicalStateAnalyzer'
 import type { MusicalState } from './MusicalStateAnalyzer'
@@ -79,7 +79,7 @@ export interface ConductorResult {
 
 // Default configuration
 const DEFAULT_CONFIG: Required<ConductorAgentConfig> = {
-  model: 'claude-sonnet-4-20250514',
+  model: 'gpt-4o',
   maxTokens: 1024,
   temperature: 0.7,
   parallelExecution: true,
@@ -283,10 +283,9 @@ export class ConductorAgent {
     }
   ): Promise<ConductorPlan> {
     if (!isAnthropicAvailable()) {
-      throw new Error('Anthropic API not available')
+      throw new Error('OpenAI API not available')
     }
 
-    const client = getAnthropicClient()
     const currentBpm = options?.currentBpm || 128
 
     // Analyze current pattern if provided
@@ -302,21 +301,13 @@ export class ConductorAgent {
     try {
       console.log('[ConductorAgent] Creating plan for:', prompt)
 
-      const response = await client.messages.create({
+      const rawResponse = await createChatCompletion({
         model: this.config.model,
-        max_tokens: this.config.maxTokens,
+        maxTokens: this.config.maxTokens,
         temperature: this.config.temperature,
         system: CONDUCTOR_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: 'user',
-            content: userMessage,
-          },
-        ],
+        messages: [{ role: 'user', content: userMessage }],
       })
-
-      const rawResponse =
-        response.content[0].type === 'text' ? response.content[0].text : ''
 
       console.log('[ConductorAgent] Plan response:', rawResponse)
 

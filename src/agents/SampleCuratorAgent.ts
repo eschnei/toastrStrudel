@@ -107,7 +107,7 @@ export interface SampleCuratorConfig {
 const DEFAULT_CONFIG: Required<SampleCuratorConfig> = {
   maxRecommendations: 6,
   useAI: false, // Start with deterministic approach
-  model: 'claude-sonnet-4-20250514',
+  model: 'gpt-4o',
   maxTokens: 1024,
   temperature: 0.7,
 };

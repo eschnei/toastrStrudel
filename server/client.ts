@@ -2,7 +2,7 @@
  * API Proxy Client
  *
  * Client-side utility for communicating with the backend API proxy.
- * Use this in production instead of direct Anthropic SDK calls.
+ * Use this in production instead of direct OpenAI SDK calls.
  *
  * @references SEC-001, NFR-017
  */
@@ -175,13 +175,13 @@ export const proxyClient = createProxyClient({
 })
 
 /**
- * Drop-in replacement for direct Anthropic calls
+ * Drop-in replacement for direct OpenAI calls
  * Use this to switch from client-side to proxy-based API calls
  *
  * @example
  * // Before (client-side, insecure)
- * const anthropic = new Anthropic({ apiKey: VITE_ANTHROPIC_API_KEY })
- * const response = await anthropic.messages.create({ ... })
+ * const openai = new OpenAI({ apiKey: VITE_OPENAI_API_KEY })
+ * const response = await openai.chat.completions.create({ ... })
  *
  * // After (proxy, secure)
  * const response = await createProxyMessage({ ... })

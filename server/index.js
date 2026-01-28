@@ -1,9 +1,9 @@
 /**
- * Vibe Conductor - Backend API Proxy Server
+ * Toastr Strudel - Backend API Proxy Server
  *
  * Provides secure API key handling for production deployment.
  * Features:
- * - Claude API proxy with server-side key storage
+ * - OpenAI API proxy with server-side key storage
  * - Rate limiting to prevent abuse
  * - CORS configuration for frontend access
  * - Request validation and sanitization
@@ -15,7 +15,7 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
-import Anthropic from '@anthropic-ai/sdk'
+import OpenAI from 'openai'
 import { config } from 'dotenv'
 
 // Load environment variables
@@ -28,17 +28,17 @@ const PORT = process.env.PORT || 3001
 // Configuration
 // ============================================================================
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 
-if (!ANTHROPIC_API_KEY) {
-  console.error('ERROR: ANTHROPIC_API_KEY environment variable is required')
+if (!OPENAI_API_KEY) {
+  console.error('ERROR: OPENAI_API_KEY environment variable is required')
   console.error('Set it in .env file or as an environment variable')
   process.exit(1)
 }
 
-// Initialize Anthropic client (server-side only)
-const anthropic = new Anthropic({
-  apiKey: ANTHROPIC_API_KEY,
+// Initialize OpenAI client (server-side only)
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY,
 })
 
 // Allowed origins for CORS
@@ -126,8 +126,8 @@ function validateMessageRequest(body) {
     // Validate message structure
     for (let i = 0; i < body.messages.length; i++) {
       const msg = body.messages[i]
-      if (!msg.role || !['user', 'assistant'].includes(msg.role)) {
-        errors.push(`messages[${i}].role must be 'user' or 'assistant'`)
+      if (!msg.role || !['user', 'assistant', 'system'].includes(msg.role)) {
+        errors.push(`messages[${i}].role must be 'user', 'assistant', or 'system'`)
       }
       if (!msg.content || typeof msg.content !== 'string') {
         errors.push(`messages[${i}].content must be a non-empty string`)
@@ -154,8 +154,8 @@ function validateMessageRequest(body) {
   }
 
   if (body.temperature !== undefined) {
-    if (typeof body.temperature !== 'number' || body.temperature < 0 || body.temperature > 1) {
-      errors.push('temperature must be a number between 0 and 1')
+    if (typeof body.temperature !== 'number' || body.temperature < 0 || body.temperature > 2) {
+      errors.push('temperature must be a number between 0 and 2')
     }
   }
 
@@ -178,8 +178,8 @@ app.get('/api/health', (req, res) => {
 })
 
 /**
- * Claude API proxy endpoint
- * Accepts message generation requests and forwards to Anthropic API
+ * OpenAI API proxy endpoint
+ * Accepts message generation requests and forwards to OpenAI API
  */
 app.post('/api/claude/messages', async (req, res) => {
   try {
@@ -197,14 +197,14 @@ app.post('/api/claude/messages', async (req, res) => {
       system,
       max_tokens = 1024,
       temperature = 0.8,
-      model = 'claude-sonnet-4-20250514',
+      model = 'gpt-4o',
     } = req.body
 
     // Validate model is allowed (prevent cost abuse)
     const allowedModels = [
-      'claude-sonnet-4-20250514',
-      'claude-3-5-sonnet-20241022',
-      'claude-3-haiku-20240307',
+      'gpt-4o',
+      'gpt-4o-mini',
+      'gpt-4-turbo',
     ]
     if (!allowedModels.includes(model)) {
       return res.status(400).json({
@@ -215,30 +215,39 @@ app.post('/api/claude/messages', async (req, res) => {
 
     console.log(`[API] Generating with model=${model}, messages=${messages.length}`)
 
-    // Call Anthropic API
-    const response = await anthropic.messages.create({
+    // Build OpenAI messages array (system prompt as first message)
+    const openaiMessages = []
+    if (system) {
+      openaiMessages.push({ role: 'system', content: system })
+    }
+    openaiMessages.push(...messages)
+
+    // Call OpenAI API
+    const response = await openai.chat.completions.create({
       model,
       max_tokens,
       temperature,
-      system,
-      messages,
+      messages: openaiMessages,
     })
 
-    // Return the response
+    // Return the response in a compatible format
     res.json({
       id: response.id,
-      type: response.type,
-      role: response.role,
-      content: response.content,
+      type: 'message',
+      role: 'assistant',
+      content: [{ type: 'text', text: response.choices[0]?.message?.content || '' }],
       model: response.model,
-      stop_reason: response.stop_reason,
-      usage: response.usage,
+      stop_reason: response.choices[0]?.finish_reason || 'end_turn',
+      usage: {
+        input_tokens: response.usage?.prompt_tokens || 0,
+        output_tokens: response.usage?.completion_tokens || 0,
+      },
     })
 
   } catch (error) {
-    console.error('[API] Claude error:', error.message)
+    console.error('[API] OpenAI error:', error.message)
 
-    // Handle specific Anthropic errors
+    // Handle specific OpenAI errors
     if (error.status === 401) {
       return res.status(500).json({
         error: 'API configuration error',
@@ -249,7 +258,7 @@ app.post('/api/claude/messages', async (req, res) => {
     if (error.status === 429) {
       return res.status(429).json({
         error: 'Rate limit exceeded',
-        message: 'Anthropic API rate limit reached. Please try again later.',
+        message: 'OpenAI API rate limit reached. Please try again later.',
       })
     }
 
@@ -276,8 +285,8 @@ app.post('/api/claude/messages', async (req, res) => {
 app.get('/api/claude/status', async (req, res) => {
   try {
     // Simple test call to check API is working
-    const response = await anthropic.messages.create({
-      model: 'claude-3-haiku-20240307',
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
       max_tokens: 10,
       messages: [{ role: 'user', content: 'ping' }],
     })
@@ -332,7 +341,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`
 ========================================
-  Vibe Conductor API Server
+  Toastr Strudel API Server
 ========================================
 
   Server running at: http://localhost:${PORT}
@@ -340,7 +349,7 @@ app.listen(PORT, () => {
   Endpoints:
     GET  /api/health         - Health check
     GET  /api/claude/status  - Check API availability
-    POST /api/claude/messages - Generate Claude response
+    POST /api/claude/messages - Generate OpenAI response
 
   Configuration:
     Allowed origins: ${ALLOWED_ORIGINS.join(', ')}
@@ -348,7 +357,7 @@ app.listen(PORT, () => {
 
   Environment:
     NODE_ENV: ${process.env.NODE_ENV || 'development'}
-    API Key: ${ANTHROPIC_API_KEY ? 'Set (' + ANTHROPIC_API_KEY.slice(0, 10) + '...)' : 'NOT SET'}
+    API Key: ${OPENAI_API_KEY ? 'Set (' + OPENAI_API_KEY.slice(0, 10) + '...)' : 'NOT SET'}
 
 ========================================
 `)

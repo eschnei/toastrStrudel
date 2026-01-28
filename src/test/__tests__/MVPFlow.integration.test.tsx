@@ -13,10 +13,9 @@ import userEvent from '@testing-library/user-event'
 import { renderHook } from '@testing-library/react'
 
 // Use vi.hoisted to create mocks that can be referenced in vi.mock factories
-const { mockCreate, mockIsAvailable, mockGetClient } = vi.hoisted(() => ({
-  mockCreate: vi.fn(),
+const { mockCreateChatCompletionChatCompletion, mockIsAvailable } = vi.hoisted(() => ({
+  mockCreateChatCompletionChatCompletion: vi.fn(),
   mockIsAvailable: vi.fn(() => true),
-  mockGetClient: vi.fn(),
 }))
 
 // Mock Strudel modules
@@ -38,15 +37,10 @@ vi.mock('@strudel/mini', () => ({
   miniAllStrings: vi.fn(),
 }))
 
-// Mock the Anthropic SDK module with controllable behavior
+// Mock the OpenAI SDK module with controllable behavior
 vi.mock('../../agents/anthropic', () => ({
-  anthropic: {
-    messages: {
-      create: mockCreate,
-    },
-  },
   isAnthropicAvailable: mockIsAvailable,
-  getAnthropicClient: mockGetClient,
+  createChatCompletion: mockCreateChatCompletionChatCompletion,
 }))
 
 // Import components and hooks after mocking
@@ -64,21 +58,9 @@ describe('MVP Flow Integration Tests', () => {
 
     // Configure mock behavior
     mockIsAvailable.mockReturnValue(true)
-    mockGetClient.mockReturnValue({
-      messages: {
-        create: mockCreate,
-      },
-    })
 
-    // Default mock response for Claude API
-    mockCreate.mockResolvedValue({
-      content: [
-        {
-          type: 'text',
-          text: 's("bd sd:3 bd sd").gain(0.8)',
-        },
-      ],
-    })
+    // Default mock response for OpenAI API (createChatCompletion returns a string)
+    mockCreateChatCompletionChatCompletion.mockResolvedValue('s("bd sd:3 bd sd").gain(0.8)')
 
     // Reset store state
     useStore.setState({
@@ -121,13 +103,13 @@ describe('MVP Flow Integration Tests', () => {
       // Verify the API was called
       await waitFor(
         () => {
-          expect(mockCreate).toHaveBeenCalled()
+          expect(mockCreateChatCompletion).toHaveBeenCalled()
         },
         { timeout: 3000 }
       )
 
       // Check that the prompt was included in the message
-      expect(mockCreate).toHaveBeenCalledWith(
+      expect(mockCreateChatCompletion).toHaveBeenCalledWith(
         expect.objectContaining({
           messages: expect.arrayContaining([
             expect.objectContaining({
@@ -143,14 +125,11 @@ describe('MVP Flow Integration Tests', () => {
       const user = userEvent.setup()
 
       // Make the API call slow so we can observe the state
-      mockCreate.mockImplementation(
+      mockCreateChatCompletion.mockImplementation(
         () =>
           new Promise(resolve =>
             setTimeout(
-              () =>
-                resolve({
-                  content: [{ type: 'text', text: 's("bd sd")' }],
-                }),
+              () => resolve('s("bd sd")'),
               200
             )
           )
@@ -176,14 +155,11 @@ describe('MVP Flow Integration Tests', () => {
       const user = userEvent.setup()
 
       // Make the API call slow
-      mockCreate.mockImplementation(
+      mockCreateChatCompletion.mockImplementation(
         () =>
           new Promise(resolve =>
             setTimeout(
-              () =>
-                resolve({
-                  content: [{ type: 'text', text: 's("bd sd")' }],
-                }),
+              () => resolve('s("bd sd")'),
               200
             )
           )
@@ -387,7 +363,7 @@ describe('MVP Flow Integration Tests', () => {
       // Should trigger API call
       await waitFor(
         () => {
-          expect(mockCreate).toHaveBeenCalled()
+          expect(mockCreateChatCompletion).toHaveBeenCalled()
         },
         { timeout: 3000 }
       )
@@ -399,7 +375,7 @@ describe('MVP Flow Integration Tests', () => {
       const user = userEvent.setup()
 
       // Make the API fail
-      mockCreate.mockRejectedValue(new Error('API Error'))
+      mockCreateChatCompletion.mockRejectedValue(new Error('API Error'))
 
       render(<App />)
 
@@ -410,7 +386,7 @@ describe('MVP Flow Integration Tests', () => {
       // Wait for the API call to fail and fallback to be used
       await waitFor(
         () => {
-          expect(mockCreate).toHaveBeenCalled()
+          expect(mockCreateChatCompletion).toHaveBeenCalled()
         },
         { timeout: 3000 }
       )
@@ -431,12 +407,10 @@ describe('MVP Flow Integration Tests', () => {
       const user = userEvent.setup()
 
       // First call fails
-      mockCreate.mockRejectedValueOnce(new Error('API Error'))
+      mockCreateChatCompletion.mockRejectedValueOnce(new Error('API Error'))
 
       // Second call succeeds
-      mockCreate.mockResolvedValueOnce({
-        content: [{ type: 'text', text: 's("bd sd")' }],
-      })
+      mockCreateChatCompletion.mockResolvedValueOnce('s("bd sd")')
 
       render(<App />)
 
@@ -448,7 +422,7 @@ describe('MVP Flow Integration Tests', () => {
 
       await waitFor(
         () => {
-          expect(mockCreate).toHaveBeenCalledTimes(1)
+          expect(mockCreateChatCompletion).toHaveBeenCalledTimes(1)
         },
         { timeout: 3000 }
       )
@@ -469,7 +443,7 @@ describe('MVP Flow Integration Tests', () => {
       // Second attempt should be made
       await waitFor(
         () => {
-          expect(mockCreate).toHaveBeenCalledTimes(2)
+          expect(mockCreateChatCompletion).toHaveBeenCalledTimes(2)
         },
         { timeout: 3000 }
       )
@@ -579,15 +553,8 @@ describe('usePatternAgent Hook', () => {
     resetPatternAgent()
 
     mockIsAvailable.mockReturnValue(true)
-    mockGetClient.mockReturnValue({
-      messages: {
-        create: mockCreate,
-      },
-    })
 
-    mockCreate.mockResolvedValue({
-      content: [{ type: 'text', text: 's("bd sd")' }],
-    })
+    mockCreateChatCompletion.mockResolvedValue('s("bd sd")')
 
     useStore.setState({
       currentPattern: null,
@@ -634,7 +601,7 @@ describe('usePatternAgent Hook', () => {
   })
 
   it('should handle generation errors gracefully with fallback', async () => {
-    mockCreate.mockRejectedValue(new Error('Test Error'))
+    mockCreateChatCompletion.mockRejectedValue(new Error('Test Error'))
 
     const { result } = renderHook(() => usePatternAgent())
 

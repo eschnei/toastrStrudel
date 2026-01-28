@@ -7,7 +7,7 @@
  * @references Phase 4 Task 4.1.5
  */
 
-import { getAnthropicClient, isAnthropicAvailable } from '../anthropic'
+import { isAnthropicAvailable, createChatCompletion } from '../anthropic'
 import { cleanPatternResponse } from '../PatternAgent'
 import type {
   SpecialistAgent,
@@ -24,7 +24,7 @@ export interface FXAgentConfig {
 
 // Default configuration
 const DEFAULT_CONFIG: Required<FXAgentConfig> = {
-  model: 'claude-sonnet-4-20250514',
+  model: 'gpt-4o',
   maxTokens: 768,
   temperature: 0.85, // Higher creativity for FX
 }
@@ -125,12 +125,10 @@ export class FXAgent implements SpecialistAgent {
       return {
         pattern: this.getDefaultPattern(context),
         success: false,
-        error: 'Anthropic API not available',
+        error: 'OpenAI API not available',
         layerType: 'fx',
       }
     }
-
-    const client = getAnthropicClient()
 
     // Detect arrangement phase from prompt
     const arrangementContext = this.detectArrangementPhase(message.prompt)
@@ -153,21 +151,13 @@ Output ONLY valid Strudel code.`
     try {
       console.log('[FXAgent] Generating FX for:', message.prompt)
 
-      const response = await client.messages.create({
+      const rawResponse = await createChatCompletion({
         model: this.config.model,
-        max_tokens: this.config.maxTokens,
+        maxTokens: this.config.maxTokens,
         temperature: this.config.temperature,
         system: FX_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: 'user',
-            content: contextInfo,
-          },
-        ],
+        messages: [{ role: 'user', content: contextInfo }],
       })
-
-      const rawResponse =
-        response.content[0].type === 'text' ? response.content[0].text : ''
 
       const pattern = cleanPatternResponse(rawResponse)
 

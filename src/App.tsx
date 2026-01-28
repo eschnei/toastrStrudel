@@ -155,7 +155,7 @@ function App() {
         {/* API warning */}
         {!isApiAvailable && (
           <div className={styles.apiWarning}>
-            Set VITE_ANTHROPIC_API_KEY in .env to enable AI generation
+            Set VITE_OPENAI_API_KEY in .env to enable AI generation
           </div>
         )}
       </footer>

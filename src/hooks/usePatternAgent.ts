@@ -54,7 +54,7 @@ export function usePatternAgent(): UsePatternAgentReturn {
     async (prompt: string): Promise<GenerationResult | null> => {
       if (!agentRef.current.isAvailable()) {
         const errMsg =
-          'AI not available. Please set VITE_ANTHROPIC_API_KEY in .env file.'
+          'AI not available. Please set VITE_OPENAI_API_KEY in .env file.'
         setError(errMsg)
         setStoreError(errMsg)
         return null

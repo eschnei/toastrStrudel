@@ -7,7 +7,7 @@
  * @references AI-010, AI-011, AI-012, AI-013, FR-016, FR-017, FR-018
  */
 
-import { getAnthropicClient, isAnthropicAvailable } from './anthropic'
+import { isAnthropicAvailable, createChatCompletion } from './anthropic'
 import {
   ARRANGEMENT_AGENT_SYSTEM_PROMPT,
   parseArrangementCommand,
@@ -43,7 +43,7 @@ export interface ArrangementResult {
 
 // Default configuration
 const DEFAULT_CONFIG: Required<ArrangementAgentConfig> = {
-  model: 'claude-sonnet-4-20250514',
+  model: 'gpt-4o',
   maxTokens: 1024,
   temperature: 0.7, // Slightly lower temperature for more consistent arrangements
 }
@@ -148,7 +148,7 @@ export class ArrangementAgent {
   ): Promise<ArrangementResult> {
     if (!isAnthropicAvailable()) {
       throw new Error(
-        'Anthropic API not available. Set VITE_ANTHROPIC_API_KEY environment variable.'
+        'OpenAI API not available. Set VITE_OPENAI_API_KEY environment variable.'
       )
     }
 
@@ -156,8 +156,6 @@ export class ArrangementAgent {
     if (!intent) {
       throw new Error(`Could not parse arrangement command: ${prompt}`)
     }
-
-    const client = getAnthropicClient()
     const genre = options?.genre || this.currentGenre || undefined
 
     // Analyze current pattern for context
@@ -200,21 +198,13 @@ export class ArrangementAgent {
       console.log('[ArrangementAgent] Duration:', intent.duration, 'bars')
       console.log('[ArrangementAgent] Intensity:', intent.intensity)
 
-      const response = await client.messages.create({
+      const rawResponse = await createChatCompletion({
         model: this.config.model,
-        max_tokens: this.config.maxTokens,
+        maxTokens: this.config.maxTokens,
         temperature: this.config.temperature,
         system: ARRANGEMENT_AGENT_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: 'user',
-            content: userMessage,
-          },
-        ],
+        messages: [{ role: 'user', content: userMessage }],
       })
-
-      const rawResponse =
-        response.content[0].type === 'text' ? response.content[0].text : ''
 
       const pattern = cleanPatternResponse(rawResponse)
 

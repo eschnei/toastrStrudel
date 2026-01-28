@@ -30,7 +30,7 @@ export type {
   ArrangementCommand,
 } from './ArrangementAgent'
 
-export { anthropic, isAnthropicAvailable, getAnthropicClient } from './anthropic'
+export { isAnthropicAvailable, createChatCompletion } from './anthropic'
 
 export {
   analyzePattern,

@@ -8,7 +8,7 @@
  * @references AI-001, AI-002, AI-003, AI-004, AI-005, AI-006, AI-007, AI-008, ARCH-002
  */
 
-import { getAnthropicClient, isAnthropicAvailable } from './anthropic'
+import { isAnthropicAvailable, createChatCompletion } from './anthropic'
 import {
   PATTERN_AGENT_SYSTEM_PROMPT,
   createEvolutionPrompt,
@@ -60,7 +60,7 @@ export interface ModifyPatternOptions {
 
 // Default configuration
 const DEFAULT_CONFIG: Required<PatternAgentConfig> = {
-  model: 'claude-sonnet-4-20250514',
+  model: 'gpt-4o',
   maxTokens: 1024,
   temperature: 0.8, // Higher temperature for more creative patterns
   useConversationContext: true,
@@ -240,11 +240,9 @@ export class PatternAgent {
   ): Promise<GenerationResult> {
     if (!isAnthropicAvailable()) {
       throw new Error(
-        'Anthropic API not available. Set VITE_ANTHROPIC_API_KEY environment variable.'
+        'OpenAI API not available. Set VITE_OPENAI_API_KEY environment variable.'
       )
     }
-
-    const client = getAnthropicClient()
 
     // EVOLUTION MODE ARCHITECTURE:
     // - First prompt (no currentPattern) = fresh generation, sets the vibe
@@ -323,17 +321,13 @@ export class PatternAgent {
       console.log('[PatternAgent] Mode:', isEvolution ? 'EVOLUTION' : 'FRESH')
       console.log('[PatternAgent] Context messages:', messages.length - 1)
 
-      const response = await client.messages.create({
+      const rawResponse = await createChatCompletion({
         model: this.config.model,
-        max_tokens: this.config.maxTokens,
+        maxTokens: this.config.maxTokens,
         temperature: this.config.temperature,
         system: PATTERN_AGENT_SYSTEM_PROMPT,
         messages,
       })
-
-      // Extract text from response
-      const rawResponse =
-        response.content[0].type === 'text' ? response.content[0].text : ''
 
       console.log('[PatternAgent] Raw response:', rawResponse)
 

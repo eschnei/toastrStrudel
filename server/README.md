@@ -1,10 +1,10 @@
-# Vibe Conductor API Server
+# Toastr Strudel API Server
 
 Backend API proxy for secure API key handling in production.
 
 ## Overview
 
-This server acts as a proxy between the Vibe Conductor frontend and the Anthropic Claude API. It keeps the API key server-side only, preventing exposure in client-side code.
+This server acts as a proxy between the Toastr Strudel frontend and the OpenAI API. It keeps the API key server-side only, preventing exposure in client-side code.
 
 ## Features
 
@@ -30,10 +30,10 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` and add your Anthropic API key:
+Edit `.env` and add your OpenAI API key:
 
 ```env
-ANTHROPIC_API_KEY=sk-ant-your-api-key-here
+OPENAI_API_KEY=sk-your-api-key-here
 PORT=3001
 FRONTEND_URL=https://your-app.example.com
 NODE_ENV=development
@@ -66,19 +66,19 @@ Health check endpoint.
 
 ### GET /api/claude/status
 
-Check if the Claude API is available.
+Check if the OpenAI API is available.
 
 **Response:**
 ```json
 {
   "status": "available",
-  "model": "claude-3-haiku-20240307"
+  "model": "gpt-4o-mini"
 }
 ```
 
 ### POST /api/claude/messages
 
-Generate a Claude response. This is the main proxy endpoint.
+Generate an OpenAI response. This is the main proxy endpoint.
 
 **Request Body:**
 ```json
@@ -89,7 +89,7 @@ Generate a Claude response. This is the main proxy endpoint.
   "system": "You are a music pattern generator...",
   "max_tokens": 1024,
   "temperature": 0.8,
-  "model": "claude-sonnet-4-20250514"
+  "model": "gpt-4o"
 }
 ```
 
@@ -99,20 +99,20 @@ Generate a Claude response. This is the main proxy endpoint.
 | messages | array | Yes | Conversation messages |
 | system | string | No | System prompt |
 | max_tokens | number | No | Max response tokens (1-4096, default: 1024) |
-| temperature | number | No | Creativity (0-1, default: 0.8) |
-| model | string | No | Model ID (default: claude-sonnet-4-20250514) |
+| temperature | number | No | Creativity (0-2, default: 0.8) |
+| model | string | No | Model ID (default: gpt-4o) |
 
 **Response:**
 ```json
 {
-  "id": "msg_...",
+  "id": "chatcmpl-...",
   "type": "message",
   "role": "assistant",
   "content": [
     { "type": "text", "text": "stack(s(\"bd sd\")...)" }
   ],
-  "model": "claude-sonnet-4-20250514",
-  "stop_reason": "end_turn",
+  "model": "gpt-4o",
+  "stop_reason": "stop",
   "usage": {
     "input_tokens": 150,
     "output_tokens": 200
@@ -180,7 +180,7 @@ VITE_API_URL=https://api.your-domain.com
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| ANTHROPIC_API_KEY | Your Anthropic API key | Yes |
+| OPENAI_API_KEY | Your OpenAI API key | Yes |
 | PORT | Server port (default: 3001) | No |
 | FRONTEND_URL | Production frontend URL for CORS | Yes |
 | NODE_ENV | Environment (production) | Yes |
@@ -192,7 +192,7 @@ VITE_API_URL=https://api.your-domain.com
 npm install -g pm2
 
 # Start the server
-pm2 start index.js --name vibe-conductor-api
+pm2 start index.js --name toastr-strudel-api
 
 # Save PM2 configuration
 pm2 save
@@ -237,9 +237,9 @@ location /api/ {
 ## Allowed Models
 
 For cost control, only these models are allowed:
-- `claude-sonnet-4-20250514`
-- `claude-3-5-sonnet-20241022`
-- `claude-3-haiku-20240307`
+- `gpt-4o`
+- `gpt-4o-mini`
+- `gpt-4-turbo`
 
 Modify the `allowedModels` array in `index.js` to change this list.
 
@@ -247,7 +247,7 @@ Modify the `allowedModels` array in `index.js` to change this list.
 
 ### API Key Not Working
 
-- Verify the key is valid at console.anthropic.com
+- Verify the key is valid at platform.openai.com
 - Check the key is correctly set in `.env`
 - Restart the server after changing `.env`
 
