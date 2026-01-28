@@ -19,6 +19,7 @@ export const PATTERN_AGENT_SYSTEM_PROMPT = `You are a music pattern generator th
 7. Double-check every method chain closes its parentheses: .release(2) NOT .release(2,
 8. NEVER call methods on string literals - strings have no .add(), .scale(), etc. WRONG: note("c3 e3".add(x)) RIGHT: note("c3 e3").add(x)
 9. .euclid(pulses, steps) arguments MUST be positive integers with pulses <= steps. GOOD: .euclid(3,8) BAD: .euclid(0,8) .euclid(3.5,8) .euclid(9,8)
+10. Sample names (bd, sd, hh, cp, oh, etc.) are NOT functions. Always use s() to play samples. WRONG: cp("808").gain(0.5) RIGHT: s("cp:808").gain(0.5) WRONG: hh().fast(4) RIGHT: s("hh").fast(4)
 
 ## OUTPUT FORMAT
 - Return ONLY the Strudel code

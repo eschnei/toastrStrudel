@@ -151,6 +151,17 @@ export function cleanPatternResponse(response: string): string {
     '$1).$2('
   )
 
+  // Fix sample names used as function calls: cp("808") → s("cp:808"), hh() → s("hh")
+  // The AI sometimes treats drum sample names as functions instead of using s()
+  cleaned = cleaned.replace(
+    /\b(bd|sd|hh|oh|cp|cb|cr|mt|ht|lt|sn|rim|ride|clap|tom|kick|snare|hihat|perc)\s*\(\s*(?:"([^"]*)")?\s*\)/g,
+    (_match, name, arg) => {
+      if (!arg) return `s("${name}")`
+      if (!arg.includes(' ')) return `s("${name}:${arg}")`
+      return `s("${name}")`
+    }
+  )
+
   // Fix invalid .euclid() arguments: both must be positive integers, pulses <= steps
   cleaned = cleaned.replace(
     /\.euclid\(\s*([^,)]+)\s*,\s*([^,)]+)\s*\)/g,
